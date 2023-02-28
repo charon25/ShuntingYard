@@ -1,6 +1,6 @@
 import unittest
 
-from shunting_yard import tokenize
+from shunting_yard import tokenize, shunting_yard
 
 class TestTokenizer(unittest.TestCase):
 
@@ -46,6 +46,40 @@ class TestTokenizer(unittest.TestCase):
 
     def test_function_underscore(self):
         self.assertListEqual(list(tokenize('arc_cos(0)')), ['arc_cos', '(', '0', ')'])
+
+
+class TestShuntingYard(unittest.TestCase):
+
+    def test_base_operations(self):
+        self.assertListEqual(shunting_yard('1+2'), '1 2 +')
+        self.assertListEqual(shunting_yard('1-2'), '1 2 -')
+        self.assertListEqual(shunting_yard('1*2'), '1 2 *')
+        self.assertListEqual(shunting_yard('1/2'), '1 2 /')
+        self.assertListEqual(shunting_yard('1^2'), '1 2 ^')
+
+    def test_priority(self):
+        self.assertListEqual(shunting_yard('2 * 1 + 3'), '2 1 * 3 +')
+
+    def test_brackets(self):
+        self.assertListEqual(shunting_yard('2 * (1 + 3)'), '1 3 + 2 *')
+
+    def test_function_no_argument(self):
+        self.assertListEqual(shunting_yard('2 * pi - 1'), '2 pi * 1 -')
+
+    def test_function_one_argument(self):
+        self.assertListEqual(shunting_yard('2 * sin(5/2)'), '5 2 / sin 2 *')
+
+    def test_function_two_argument(self):
+        self.assertListEqual(shunting_yard('5 * max(2; 6)'), '5 2 max 5 *')
+
+    def test_associativity(self):
+        self.assertListEqual(shunting_yard('5 ^ 4 ^ 3 ^ 2'), '5 4 3 2 ^ ^ ^')
+
+    def test_complex_1(self):
+        self.assertListEqual(shunting_yard('3 + 4 × 2 / ( 1 − 5 ) ^ 2 ^ 3'), '3 4 2 × 1 5 − 2 3 ^ ^ / +')
+
+    def test_complex_1(self):
+        self.assertListEqual(shunting_yard('sin ( max ( 2, 3 ) / 3 × pi )'), '2 3 max 3 / pi × sin')
 
 
 if __name__ == '__main__':

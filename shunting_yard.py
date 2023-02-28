@@ -35,3 +35,8 @@ def tokenize(string: str) -> Iterator[str]:
             cursor += (cursor_end - cursor)
         else:
             cursor += 1
+
+
+def shunting_yard(string: str) -> str:
+    pass
+
