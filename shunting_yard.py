@@ -1,8 +1,10 @@
+from operator import add, sub, mul, truediv
 from enum import Enum
 import math
 from string import ascii_lowercase
-from typing import Iterator
+from typing import Iterator, Union
 
+Number = Union[int, float]
 
 BASE_OPERATORS = '+-*/^'
 NUMBER_CHARS = '0123456789.'
@@ -21,7 +23,6 @@ OPERATORS_PRECEDENCE: dict[str, int] = {
 def get_precedence(operator: str):
     return OPERATORS_PRECEDENCE.get(operator, math.inf)
 
-
 class Associativity(Enum):
     NONE = 0
     LEFT = 1
@@ -35,6 +36,22 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
     '^': Associativity.RIGHT,
 }
 
+
+FUNCTIONS: dict[str, tuple[int, callable]] = {
+    '+': (2, add),
+    '-': (2, sub),
+    '*': (2, mul),
+    '/': (2, truediv),
+    '^': (2, pow),
+    'pi': (0, lambda:math.pi),
+    'e': (0, lambda:math.exp(1)),
+    'sin': (1, math.sin),
+    'cos': (1, math.cos),
+    'tan': (1, math.tan),
+    'min': (2, min),
+    'max': (2, max),
+    'abs': (2, abs)
+}
 
 
 def tokenize(string: str) -> Iterator[str]:
@@ -67,12 +84,13 @@ def tokenize(string: str) -> Iterator[str]:
         else:
             cursor += 1
 
+
 # Reference : https://en.wikipedia.org/wiki/Shunting_yard_algorithm
 def shunting_yard(string: str) -> str:
     output: list[str] = []
     operator_stack: list[str] = []
 
-    for index, token in enumerate(tokenize(string)):
+    for token in tokenize(string):
         first_char = token[0]
 
         if first_char in NUMBER_CHARS:
@@ -120,4 +138,29 @@ def shunting_yard(string: str) -> str:
         output.append(token)
 
     return ' '.join(output)
+
+
+def compute_rpn(rpn: str) -> Number:
+    stack: list[Number] = []
+
+    for token in rpn.split():
+        if token[0] in NUMBER_CHARS:
+            # Convert to float or int according to the presence of a dot
+            stack.append(float(token) if '.' in token else int(token))
+        else:
+            if not token in FUNCTIONS:
+                raise ValueError(f'Unknown function : {token}')
+
+            param_count, func = FUNCTIONS[token]
+
+            # Seperate both cases because l[-0:] is all the list and not an empty one
+            if param_count > 0:
+                parameters = stack[-param_count:]
+                stack = stack[:-param_count]
+            else:
+                parameters = []
+
+            stack.append(func(*parameters))
+
+    return stack[0]
 
