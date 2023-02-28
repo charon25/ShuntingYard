@@ -26,5 +26,11 @@ class TestReversePolishNotation(unittest.TestCase):
     def test_function_two_argument(self):
         self.assertEqual(compute_rpn('2 5 max'), 5)
 
+    def test_function_additional_function(self):
+        self.assertEqual(compute_rpn('3 inc', {'inc': (1, lambda x:x + 1)}), 4)
+
+    def test_function_overwriting_function(self):
+        self.assertEqual(compute_rpn('3 2 add', {'add': (2, lambda x, y:x + 2 * y)}), 7)
+
 if __name__ == '__main__':
     unittest.main()

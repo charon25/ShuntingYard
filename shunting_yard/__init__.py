@@ -1,9 +1,12 @@
-from shunting_yard.rpn import compute_rpn, Number
+from typing import Optional
+
+from shunting_yard.rpn import compute_rpn, Number, FunctionDictionary
 from shunting_yard.shunting_yard import shunting_yard
 from shunting_yard.tokenize import tokenize
 
-def compute(expression: str) -> Number:
-    """Compute the value of a mathematical expression. Equivalent to compute_rpn(shunting_yard(expression)).
+
+def compute(expression: str, additional_functions: Optional[FunctionDictionary] = None) -> Number:
+    """Compute the value of a mathematical expression. Equivalent to compute_rpn(shunting_yard(expression), additional_functions).
     Check the docstring of these functions for more details.
 
     Args:
@@ -12,4 +15,4 @@ def compute(expression: str) -> Number:
     Returns:
         Number: Result.
     """
-    return compute_rpn(shunting_yard(expression))
+    return compute_rpn(shunting_yard(expression), additional_functions)

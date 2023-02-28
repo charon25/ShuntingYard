@@ -1,13 +1,14 @@
 import math
-from operator import add, sub, mul, truediv
-from typing import Union
+from operator import add, mul, sub, truediv
+from typing import Any, Callable, Optional, Union
 
 from shunting_yard.constants import NUMBER_CHARS
 
 
 Number = Union[int, float]
+FunctionDictionary = dict[str, tuple[int, Callable[[Any], Number]]]
 
-FUNCTIONS: dict[str, tuple[int, callable]] = {
+FUNCTIONS: FunctionDictionary = {
     '+': (2, add),
     '-': (2, sub),
     '*': (2, mul),
@@ -25,9 +26,11 @@ FUNCTIONS: dict[str, tuple[int, callable]] = {
 }
 
 
-def compute_rpn(rpn: str) -> Number:
+def compute_rpn(rpn: str, additional_functions: Optional[FunctionDictionary] = None) -> Number:
     """Compute the value of an expression in the Reverse Polish Notation format (see https://en.wikipedia.org/wiki/Reverse_Polish_notation for more details).
     The included function are the five base operations (+-*/^), sin, cos, tan, sqrt, abs, min, max and e and pi as constants.
+    The additional_functions parameters enables more function to be used in the computation. See below for its format.
+
 
     >>> compute_rpn("1 2 3 * +")
     7
@@ -40,6 +43,9 @@ def compute_rpn(rpn: str) -> Number:
 
     Args:
         rpn (str): RPN expression.
+        additional_functions (FunctionDictionary): dictionary containing more functions. The keys should be string, and the values should be a tuple
+        containing first the number of parameters of the function (>= 0), and then the function itself. For example {'inc': (1, lambda x:x+1)} will
+        enable the computation to use the inc function. If the function exists by default, it will be overwritten.
 
     Raises:
         ValueError: raised if an unknown function is in the expression.
@@ -47,6 +53,10 @@ def compute_rpn(rpn: str) -> Number:
     Returns:
         Number: The result of the operation.
     """
+
+    functions = FUNCTIONS
+    if additional_functions is not None:
+        functions = functions.update(additional_functions)
 
     stack: list[Number] = []
 
