@@ -1,6 +1,6 @@
 import unittest
 
-from shunting_yard import shunting_yard
+from shunting_yard import shunting_yard, MismatchedBracketsException
 
 
 class TestShuntingYard(unittest.TestCase):
@@ -37,9 +37,9 @@ class TestShuntingYard(unittest.TestCase):
         self.assertEqual(shunting_yard('sin ( max ( 2, 3 ) / 3 * pi )'), '2 3 max 3 / pi * sin')
 
     def test_mismatched_brackets(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MismatchedBracketsException):
             shunting_yard('sin(1')
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MismatchedBracketsException):
             shunting_yard('1 + 2)')
 
 

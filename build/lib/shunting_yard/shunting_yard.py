@@ -6,6 +6,12 @@ from shunting_yard.tokenize import tokenize
 from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS
 
 
+class MismatchedBracketsException(Exception):
+    pass
+class UnknownTokenException(Exception):
+    pass
+
+
 OPERATORS_PRECEDENCE: dict[str, int] = {
     '+': 10,
     '-': 10,
@@ -34,11 +40,31 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
 
 
 # Reference : https://en.wikipedia.org/wiki/Shunting_yard_algorithm
-def shunting_yard(string: str) -> str:
+def shunting_yard(expression: str) -> str:
+    """Convert the given classical math expression into Reverse Polish Notation using the Shunting-yard algorithm (see https://en.wikipedia.org/wiki/Shunting_yard_algorithm for more details). All whitespace are ignored.
+
+
+    >>> shuting_yard("1 + 2")
+    '1 2 +'
+
+    >>> shuting_yard("sin(max(2, 3) / 3 * pi)")
+    '2 3 max 3 / pi * sin'
+    
+
+    Args:
+        expression (str): string containing the mathematical expression to convert.
+
+    Raises:
+        MismatchedBracketsException: raised if the bracket are unbalanced.
+
+
+    Returns:
+        str: The RPN expression corresponding to the mathematical expression.
+    """
     output: list[str] = []
     operator_stack: list[str] = []
 
-    for token in tokenize(string):
+    for token in tokenize(expression):
         first_char = token[0]
 
         if first_char in NUMBER_CHARS:
@@ -52,12 +78,12 @@ def shunting_yard(string: str) -> str:
 
         elif first_char == ')':
             if len(operator_stack) == 0:
-                raise ValueError('Mismatched brackets.')
+                raise MismatchedBracketsException('More right than left brackets.')
 
             while operator_stack[-1] != '(':
                 output.append(operator_stack.pop())
                 if len(operator_stack) == 0:
-                    raise ValueError('Mismatched brackets.')
+                    raise MismatchedBracketsException('More right than left brackets.')
 
             operator_stack.pop() # Pop the '(' left over
 
@@ -76,13 +102,10 @@ def shunting_yard(string: str) -> str:
             
             operator_stack.append(token)
 
-        else:
-            raise ValueError(f'Unknown token : {token}')
-
     # Empty the stack
     for token in reversed(operator_stack):
         if token == '(':
-            raise ValueError('Mismatched brackets.')
+            raise MismatchedBracketsException('More left than right brackets.')
         output.append(token)
 
     return ' '.join(output)
