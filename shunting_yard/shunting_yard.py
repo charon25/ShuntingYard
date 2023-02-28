@@ -1,14 +1,9 @@
-from operator import add, sub, mul, truediv
-from enum import Enum
-import math
 from string import ascii_lowercase
-from typing import Iterator, Union
+import math
+from enum import Enum
 
-Number = Union[int, float]
-
-BASE_OPERATORS = '+-*/^'
-NUMBER_CHARS = '0123456789.'
-FUNCTION_CHARS = ascii_lowercase + '_'
+from shunting_yard.tokenize import tokenize
+from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS
 
 
 OPERATORS_PRECEDENCE: dict[str, int] = {
@@ -36,53 +31,6 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
     '^': Associativity.RIGHT,
 }
 
-
-FUNCTIONS: dict[str, tuple[int, callable]] = {
-    '+': (2, add),
-    '-': (2, sub),
-    '*': (2, mul),
-    '/': (2, truediv),
-    '^': (2, pow),
-    'pi': (0, lambda:math.pi),
-    'e': (0, lambda:math.exp(1)),
-    'sin': (1, math.sin),
-    'cos': (1, math.cos),
-    'tan': (1, math.tan),
-    'min': (2, min),
-    'max': (2, max),
-    'abs': (2, abs)
-}
-
-
-def tokenize(string: str) -> Iterator[str]:
-    if string == '':
-        return
-
-    string = string.lower()
-    cursor = 0
-    while cursor < len(string):
-        char = string[cursor]
-        if char in BASE_OPERATORS or char in '()':
-            yield char
-            cursor += 1
-        elif char in NUMBER_CHARS:
-            # Go through until not a number anymore
-            cursor_end = cursor + 1
-            while cursor_end < len(string) and string[cursor_end] in NUMBER_CHARS:
-                cursor_end += 1
-
-            yield string[cursor:cursor_end]
-            cursor += (cursor_end - cursor)
-        elif char in FUNCTION_CHARS:
-            # Go through until not a number anymore
-            cursor_end = cursor + 1
-            while  cursor_end < len(string) and string[cursor_end] in FUNCTION_CHARS:
-                cursor_end += 1
-
-            yield string[cursor:cursor_end]
-            cursor += (cursor_end - cursor)
-        else:
-            cursor += 1
 
 
 # Reference : https://en.wikipedia.org/wiki/Shunting_yard_algorithm
@@ -138,29 +86,3 @@ def shunting_yard(string: str) -> str:
         output.append(token)
 
     return ' '.join(output)
-
-
-def compute_rpn(rpn: str) -> Number:
-    stack: list[Number] = []
-
-    for token in rpn.split():
-        if token[0] in NUMBER_CHARS:
-            # Convert to float or int according to the presence of a dot
-            stack.append(float(token) if '.' in token else int(token))
-        else:
-            if not token in FUNCTIONS:
-                raise ValueError(f'Unknown function : {token}')
-
-            param_count, func = FUNCTIONS[token]
-
-            # Seperate both cases because l[-0:] is all the list and not an empty one
-            if param_count > 0:
-                parameters = stack[-param_count:]
-                stack = stack[:-param_count]
-            else:
-                parameters = []
-
-            stack.append(func(*parameters))
-
-    return stack[0]
-
