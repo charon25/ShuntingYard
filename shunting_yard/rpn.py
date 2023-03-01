@@ -60,7 +60,7 @@ def compute_rpn(rpn: str, additional_functions: Optional[FunctionDictionary] = N
 
     functions = FUNCTIONS
     if additional_functions is not None:
-        functions = functions.update(additional_functions)
+        functions.update(additional_functions)
 
     stack: list[Number] = []
 
@@ -69,10 +69,10 @@ def compute_rpn(rpn: str, additional_functions: Optional[FunctionDictionary] = N
             # Convert to float or int according to the presence of a dot
             stack.append(float(token) if '.' in token else int(token))
         else:
-            if not token in FUNCTIONS:
+            if not token in functions:
                 raise ValueError(f'Unknown function : {token}')
 
-            param_count, func = FUNCTIONS[token]
+            param_count, func = functions[token]
 
             # Seperate both cases because l[-0:] is all the list and not an empty one
             if param_count > 0:
