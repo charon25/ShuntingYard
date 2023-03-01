@@ -69,7 +69,7 @@ import math
 additional_functions = {
     'gamma': (0, lambda:0.5772156649015329), # create new constant
     'inc': (1, lambda x:x + 1), # using lambda
-    'exp': (1, math.exp), # using already existing functino
+    'exp': (1, math.exp), # using already existing function
     'gcd3': (3, math.gcd) # 3 parameters
 }
 ```
