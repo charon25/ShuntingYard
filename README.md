@@ -7,7 +7,7 @@ This repo is a Python (>= 3.9) module containing an implementation of the [Shunt
 To install it, just run :
 
 ```bash
-pip install <TODO> --user
+pip install shunting-yard --user
 ```
 
 Or alternatively you can use :
