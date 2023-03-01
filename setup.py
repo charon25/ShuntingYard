@@ -13,5 +13,6 @@ setuptools.setup(
 	python_requires=">=3.9",
 	url="https://www.github.com/charon25/ShuntingYard",
 	license="MIT",
-	packages=['shunting_yard']
+	packages=['shunting_yard'],
+	download_url="https://github.com/charon25/ShuntingYard/archive/refs/tags/'v1.0'.tar.gz"
 )
