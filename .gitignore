@@ -1,5 +1,5 @@
 __pycache__
 .vscode
-Shunting_yard_Algorithm.egg-info
+*.egg-info
 dist
 build
