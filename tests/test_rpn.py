@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from shunting_yard import compute_rpn
+from shunting_yard import compute_rpn, WrongExpressionError
 
 
 class TestReversePolishNotation(unittest.TestCase):
@@ -31,6 +31,14 @@ class TestReversePolishNotation(unittest.TestCase):
 
     def test_function_overwriting_function(self):
         self.assertEqual(compute_rpn('3 2 add', {'add': (2, lambda x, y:x + 2 * y)}), 7)
+
+    def test_errors(self):
+        with self.assertRaises(WrongExpressionError):
+            compute_rpn('1 +')
+            compute_rpn('abs')
+        with self.assertRaises(WrongExpressionError):
+            compute_rpn('1 1 1 +')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -5,6 +5,10 @@ from typing import Any, Callable, Optional, Union
 from shunting_yard.constants import NUMBER_CHARS
 
 
+class WrongExpressionError(Exception):
+    pass
+
+
 Number = Union[int, float]
 FunctionDictionary = dict[str, tuple[int, Callable[[Any], Number]]]
 
@@ -22,7 +26,7 @@ FUNCTIONS: FunctionDictionary = {
     'tan': (1, math.tan),
     'min': (2, min),
     'max': (2, max),
-    'abs': (2, abs)
+    'abs': (1, abs)
 }
 
 
@@ -72,11 +76,16 @@ def compute_rpn(rpn: str, additional_functions: Optional[FunctionDictionary] = N
 
             # Seperate both cases because l[-0:] is all the list and not an empty one
             if param_count > 0:
+                if len(stack) < param_count:
+                    raise WrongExpressionError(f"Not enough parameters for function '{token}' : {len(stack)} found, {param_count} expected.")
                 parameters = stack[-param_count:]
                 stack = stack[:-param_count]
             else:
                 parameters = []
 
             stack.append(func(*parameters))
+
+    if len(stack) > 1:
+        raise WrongExpressionError(f"Expression does not give only one result.")
 
     return stack[0]

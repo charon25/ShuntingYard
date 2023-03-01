@@ -6,9 +6,7 @@ from shunting_yard.tokenize import tokenize
 from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS
 
 
-class MismatchedBracketsException(Exception):
-    pass
-class UnknownTokenException(Exception):
+class MismatchedBracketsError(Exception):
     pass
 
 
@@ -55,7 +53,7 @@ def shunting_yard(expression: str) -> str:
         expression (str): string containing the mathematical expression to convert.
 
     Raises:
-        MismatchedBracketsException: raised if the bracket are unbalanced.
+        MismatchedBracketsError: raised if the bracket are unbalanced.
 
 
     Returns:
@@ -78,12 +76,12 @@ def shunting_yard(expression: str) -> str:
 
         elif first_char == ')':
             if len(operator_stack) == 0:
-                raise MismatchedBracketsException('More right than left brackets.')
+                raise MismatchedBracketsError('More right than left brackets.')
 
             while operator_stack[-1] != '(':
                 output.append(operator_stack.pop())
                 if len(operator_stack) == 0:
-                    raise MismatchedBracketsException('More right than left brackets.')
+                    raise MismatchedBracketsError('More right than left brackets.')
 
             operator_stack.pop() # Pop the '(' left over
 
@@ -105,7 +103,7 @@ def shunting_yard(expression: str) -> str:
     # Empty the stack
     for token in reversed(operator_stack):
         if token == '(':
-            raise MismatchedBracketsException('More left than right brackets.')
+            raise MismatchedBracketsError('More left than right brackets.')
         output.append(token)
 
     return ' '.join(output)
