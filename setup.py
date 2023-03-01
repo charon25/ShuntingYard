@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fi:
 
 setuptools.setup(
 	name="shunting-yard",
-	version="1.0.0",
+	version="1.0",
 	author="Paul 'charon25' Kern",
 	description="Compute any math expression",
 	long_description=long_description,
