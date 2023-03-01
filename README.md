@@ -18,6 +18,13 @@ cd ShuntingYard
 python setup.py install --user
 ```
 
+You can check the installation was successful by running the following command and getting `1 = 1` as output :
+
+```bash
+python -m shunting_yard 1
+```
+
+
 # Usage
 
 Either use it directly in a command line interface with :
