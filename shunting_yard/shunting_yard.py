@@ -15,7 +15,9 @@ OPERATORS_PRECEDENCE: dict[str, int] = {
     '-': 10,
     '*': 20,
     '/': 20,
-    '^': 30
+    '^': 30,
+    '-u': 40,
+    '+u': 40,
 }
 
 # Returns the precendence if the operator is one of +-*/^, or infinity if it is a function
@@ -33,6 +35,8 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
     '*': Associativity.LEFT,
     '/': Associativity.LEFT,
     '^': Associativity.RIGHT,
+    '-u': Associativity.RIGHT,
+    '+u': Associativity.LEFT,
 }
 
 

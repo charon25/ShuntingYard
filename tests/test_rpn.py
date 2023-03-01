@@ -13,6 +13,16 @@ class TestReversePolishNotation(unittest.TestCase):
         self.assertAlmostEqual(compute_rpn('1 2 /'), 0.5)
         self.assertEqual(compute_rpn('1 2 ^'), 1)
 
+    def test_unary_minus(self):
+        self.assertEqual(compute_rpn('1 -u'), -1)
+        self.assertEqual(compute_rpn('1 2 + -u'), -3)
+        self.assertEqual(compute_rpn('1 -u 2 *'), -2)
+
+    def test_unary_plus(self):
+        self.assertEqual(compute_rpn('1 +u'), 1)
+        self.assertEqual(compute_rpn('1 2 + +u'), 3)
+        self.assertEqual(compute_rpn('1 +u 2 *'), 2)
+
     def test_priority_brackets(self):
         self.assertEqual(compute_rpn('2 1 * 3 +'), 5)
         self.assertEqual(compute_rpn('2 1 3 + *'), 8)

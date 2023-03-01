@@ -1,5 +1,5 @@
 import math
-from operator import add, mul, sub, truediv
+from operator import add, mul, neg, pos, sub, truediv
 from typing import Any, Callable, Optional, Union
 
 from shunting_yard.constants import NUMBER_CHARS
@@ -14,7 +14,9 @@ FunctionDictionary = dict[str, tuple[int, Callable[[Any], Number]]]
 
 FUNCTIONS: FunctionDictionary = {
     '+': (2, add),
+    '+u': (1, pos),
     '-': (2, sub),
+    '-u': (1, neg),
     '*': (2, mul),
     '/': (2, truediv),
     '^': (2, pow),
