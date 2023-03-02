@@ -42,7 +42,7 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
 
 
 # Reference : https://en.wikipedia.org/wiki/Shunting_yard_algorithm
-def shunting_yard(expression: str) -> str:
+def shunting_yard(expression: str, case_sensitive: bool = True) -> str:
     """Convert the given classical math expression into Reverse Polish Notation using the Shunting-yard algorithm (see https://en.wikipedia.org/wiki/Shunting_yard_algorithm for more details). All whitespace are ignored.
 
 
@@ -55,6 +55,10 @@ def shunting_yard(expression: str) -> str:
 
     Args:
         expression (str): string containing the mathematical expression to convert.
+        case_sensitive (bool): indicates whether the expression should care about case.
+        additional_functions (FunctionDictionary): dictionary containing more functions. The keys should be string, and the values should be a tuple
+        containing first the number of parameters of the function (>= 0), and then the function itself. For example {'inc': (1, lambda x:x+1)} will
+        enable the computation to use the inc function. If the function exists by default, it will be overwritten.
 
     Raises:
         MismatchedBracketsError: raised if the bracket are unbalanced.
@@ -65,6 +69,9 @@ def shunting_yard(expression: str) -> str:
     """
     output: list[str] = []
     operator_stack: list[str] = []
+
+    if not case_sensitive:
+        expression = expression.lower()
 
     for token in tokenize(expression):
         first_char = token[0]

@@ -7,7 +7,6 @@ def tokenize(string: str) -> Iterator[str]:
     if string == '':
         return
 
-    string = string.lower()
     cursor = 0
     is_infix = False
 

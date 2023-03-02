@@ -42,6 +42,11 @@ class TestShuntingYard(unittest.TestCase):
         with self.assertRaises(MismatchedBracketsError):
             shunting_yard('1 + 2)')
 
+    def test_case_sensitive(self):
+        self.assertNotEqual(shunting_yard('min(1, 2)'), shunting_yard('MIN(1, 2)'))
+        self.assertNotEqual(shunting_yard('min(1, 2)', case_sensitive=True), shunting_yard('MIN(1, 2)', case_sensitive=True))
+        self.assertEqual(shunting_yard('min(1, 2)', case_sensitive=False), shunting_yard('MIN(1, 2)', case_sensitive=False))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -42,9 +42,6 @@ class TestTokenizer(unittest.TestCase):
     def test_function_2_arguments(self):
         self.assertListEqual(list(tokenize('max(1, 4)')), ['max', '(', '1', '4', ')'])
 
-    def test_function_upper_case(self):
-        self.assertListEqual(list(tokenize('MIN(1;4)')), ['min', '(', '1', '4', ')'])
-
     def test_function_underscore(self):
         self.assertListEqual(list(tokenize('arc_cos(0)')), ['arc_cos', '(', '0', ')'])
 
