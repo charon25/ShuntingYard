@@ -74,6 +74,8 @@ additional_functions = {
 }
 ```
 
+The `sy.compute` (and `sy.shuting_yard`) also have a `case_sensitive` parameter (bool, default is `True`).
+
 ## Additional features
 
 Instead of just calling the `sy.compute` function, you can break it into its parts :
