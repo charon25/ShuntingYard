@@ -1,6 +1,7 @@
 from string import ascii_lowercase
 import math
 from enum import Enum
+from typing import Optional
 
 from shunting_yard.tokenize import tokenize
 from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS, UNARY_OPERATORS_SYMBOLS
@@ -42,7 +43,7 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
 
 
 # Reference : https://en.wikipedia.org/wiki/Shunting_yard_algorithm
-def shunting_yard(expression: str, case_sensitive: bool = True) -> str:
+def shunting_yard(expression: str, case_sensitive: bool = True, variable: Optional[str] = None) -> str:
     """Convert the given classical math expression into Reverse Polish Notation using the Shunting-yard algorithm (see https://en.wikipedia.org/wiki/Shunting_yard_algorithm for more details). All whitespace are ignored.
 
 
@@ -56,6 +57,7 @@ def shunting_yard(expression: str, case_sensitive: bool = True) -> str:
     Args:
         expression (str): string containing the mathematical expression to convert.
         case_sensitive (bool): indicates whether the expression should care about case.
+        variable (str, optional): if defined, will treat every token matching the variable as a number.
 
     Raises:
         MismatchedBracketsError: raised if the bracket are unbalanced.
@@ -73,7 +75,7 @@ def shunting_yard(expression: str, case_sensitive: bool = True) -> str:
     for token in tokenize(expression):
         first_char = token[0]
 
-        if first_char in NUMBER_CHARS:
+        if first_char in NUMBER_CHARS or token == variable:
             output.append(token)
             if len(operator_stack) > 0 and operator_stack[-1] in UNARY_OPERATORS_SYMBOLS:
                 output.append(operator_stack.pop())

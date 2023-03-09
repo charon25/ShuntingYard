@@ -74,7 +74,9 @@ additional_functions = {
 }
 ```
 
-The `sy.compute` (and `sy.shuting_yard`) also have a `case_sensitive` parameter (bool, default is `True`).
+The `sy.compute` (and `sy.shuting_yard`) also have extra parameters :
+ - `case_sensitive` (bool, defaults to `True`) : if `True`, will consider `sin` and `SIN` different functions.
+ - `variable` (str, optional) : if defined, will consider any token matching it as a number. This is useful in expression such as `min(x, 1)` to get `x` to behave as a number.
 
 ## Additional features
 
