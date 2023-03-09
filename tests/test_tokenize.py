@@ -57,6 +57,11 @@ class TestTokenizer(unittest.TestCase):
         self.assertListEqual(list(tokenize('2*+1')), ['2', '*', '+u', '1'])
         self.assertListEqual(list(tokenize('+(+1)')), ['+u', '(', '+u', '1', ')'])
 
+    def test_function_unary_in_function(self):
+        self.assertListEqual(list(tokenize('min(-1, 2)')), ['min', '(', '-u', '1', '2', ')'])
+        self.assertListEqual(list(tokenize('min(1, -2)')), ['min', '(', '1', '-u', '2', ')'])
+        self.assertListEqual(list(tokenize('min(1, -(2+sin(3)))')), ['min', '(', '1', '-u', '(', '2', '+', 'sin', '(', '3', ')', ')', ')'])
+
 
 
 if __name__ == '__main__':

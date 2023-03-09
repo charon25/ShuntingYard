@@ -3,7 +3,7 @@ import math
 from enum import Enum
 
 from shunting_yard.tokenize import tokenize
-from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS
+from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS, UNARY_OPERATORS_SYMBOLS
 
 
 class MismatchedBracketsError(Exception):
@@ -75,6 +75,8 @@ def shunting_yard(expression: str, case_sensitive: bool = True) -> str:
 
         if first_char in NUMBER_CHARS:
             output.append(token)
+            if len(operator_stack) > 0 and operator_stack[-1] in UNARY_OPERATORS_SYMBOLS:
+                output.append(operator_stack.pop())
 
         elif first_char in FUNCTION_CHARS:
             operator_stack.append(token)
@@ -94,7 +96,7 @@ def shunting_yard(expression: str, case_sensitive: bool = True) -> str:
             operator_stack.pop() # Pop the '(' left over
 
             # If there is a function left, pop it to the output
-            if len(operator_stack) > 0 and operator_stack[-1] in FUNCTION_CHARS:
+            if len(operator_stack) > 0 and (operator_stack[-1] in FUNCTION_CHARS or operator_stack[-1] in UNARY_OPERATORS_SYMBOLS):
                 output.append(operator_stack.pop())
 
         elif first_char in BASE_OPERATORS:

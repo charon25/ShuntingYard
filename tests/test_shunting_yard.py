@@ -47,6 +47,13 @@ class TestShuntingYard(unittest.TestCase):
         self.assertNotEqual(shunting_yard('min(1, 2)', case_sensitive=True), shunting_yard('MIN(1, 2)', case_sensitive=True))
         self.assertEqual(shunting_yard('min(1, 2)', case_sensitive=False), shunting_yard('MIN(1, 2)', case_sensitive=False))
 
+    def test_unary_in_function(self):
+        self.assertEqual(shunting_yard('min(-1, 2)'), '1 -u 2 min')
+        self.assertEqual(shunting_yard('min(-(1+3), 2)'), '1 3 + -u 2 min')
+        self.assertEqual(shunting_yard('min(1, -2)'), '1 2 -u min')
+        self.assertEqual(shunting_yard('min(1, -(2+3))'), '1 2 3 + -u min')
+        self.assertEqual(shunting_yard('min(1, -min(3, 4))'), '1 3 4 min -u min')
+
 
 if __name__ == '__main__':
     unittest.main()

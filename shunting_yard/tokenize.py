@@ -7,6 +7,9 @@ def tokenize(string: str) -> Iterator[str]:
     if string == '':
         return
 
+    # Remove all whitespaces are they do not change anything
+    string = ''.join(string.split())
+
     cursor = 0
     is_infix = False
 
@@ -43,4 +46,6 @@ def tokenize(string: str) -> Iterator[str]:
             is_infix = True
 
         else:
+            # This mean we encountered another character acting as a separator
+            is_infix = False
             cursor += 1
