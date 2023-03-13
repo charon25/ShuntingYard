@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Optional
 
 from shunting_yard.tokenize import tokenize
-from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS, UNARY_OPERATORS_SYMBOLS
+from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS, SEPARATORS, SEPARATORS_NO_CLOSING_BRACKET, UNARY_OPERATORS_SYMBOLS
 
 
 class MismatchedBracketsError(Exception):
@@ -52,7 +52,7 @@ def shunting_yard(expression: str, case_sensitive: bool = True, variable: Option
 
     >>> shuting_yard("sin(max(2, 3) / 3 * pi)")
     '2 3 max 3 / pi * sin'
-    
+
 
     Args:
         expression (str): string containing the mathematical expression to convert.
@@ -86,16 +86,18 @@ def shunting_yard(expression: str, case_sensitive: bool = True, variable: Option
         elif first_char == '(':
             operator_stack.append(first_char)
 
-        elif first_char == ')':
+        elif first_char in SEPARATORS: # The ( has already been processed above, so it's only ),;
             if len(operator_stack) == 0:
                 raise MismatchedBracketsError('More right than left brackets.')
 
-            while operator_stack[-1] != '(':
+            while not operator_stack[-1] in SEPARATORS_NO_CLOSING_BRACKET:
                 output.append(operator_stack.pop())
                 if len(operator_stack) == 0:
                     raise MismatchedBracketsError('More right than left brackets.')
 
-            operator_stack.pop() # Pop the '(' left over
+            operator_stack.pop() # Pop the left over separator
+            if first_char != ')': # If it's not the end of a bracket, replace by the current separator
+                operator_stack.append(first_char)
 
             # If there is a function left, pop it to the output
             if len(operator_stack) > 0 and (operator_stack[-1] in FUNCTION_CHARS or operator_stack[-1] in UNARY_OPERATORS_SYMBOLS):
@@ -103,13 +105,13 @@ def shunting_yard(expression: str, case_sensitive: bool = True, variable: Option
 
         elif first_char in BASE_OPERATORS:
             while (len(operator_stack) > 0 and
-                  (operator := operator_stack[-1]) != '(' and 
-                  (get_precedence(operator) > get_precedence(token) or 
+                  (operator := operator_stack[-1]) not in SEPARATORS_NO_CLOSING_BRACKET and
+                  (get_precedence(operator) > get_precedence(token) or
                         (get_precedence(operator) == get_precedence(token) and
                         OPERATORS_ASSOCIATIVITY[token] == Associativity.LEFT))):
-                
+
                 output.append(operator_stack.pop())
-            
+
             operator_stack.append(token)
 
     # Empty the stack

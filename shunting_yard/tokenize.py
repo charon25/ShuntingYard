@@ -1,6 +1,6 @@
 from typing import Iterator
 
-from shunting_yard.constants import BASE_OPERATORS, FUNCTION_CHARS, FUNCTION_FIRST_CHARS, NUMBER_CHARS, UNARY_OPERATORS
+from shunting_yard.constants import BASE_OPERATORS, FUNCTION_CHARS, FUNCTION_FIRST_CHARS, NUMBER_CHARS, SEPARATORS, UNARY_OPERATORS
 
 
 def tokenize(string: str) -> Iterator[str]:
@@ -20,7 +20,7 @@ def tokenize(string: str) -> Iterator[str]:
             yield f'{char}u'
             cursor += 1
 
-        elif char in BASE_OPERATORS or char in '()':
+        elif char in BASE_OPERATORS or char in SEPARATORS:
             yield char
             cursor += 1
             is_infix = (char == ')')

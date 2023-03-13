@@ -55,11 +55,15 @@ class TestShuntingYard(unittest.TestCase):
         self.assertEqual(shunting_yard('min(1, -min(3, 4))'), '1 3 4 min -u min')
 
     def test_variable(self):
-        self.assertEqual(shunting_yard('min(x, 1)'), '1 x min')
+        self.assertEqual(shunting_yard('min(x, 1)'), 'x 1 min')
         self.assertEqual(shunting_yard('min(x, 1)', variable='x'), 'x 1 min')
         self.assertEqual(shunting_yard('min(1, x)', variable='x'), '1 x min')
         self.assertEqual(shunting_yard('min(ab, 1)', variable='ab'), 'ab 1 min')
         self.assertEqual(shunting_yard('min(1, x, 2)', variable='x'), '1 x 2 min')
+
+    def test_multiple_argument_functions(self):
+        self.assertEqual(shunting_yard('min(1 - 2, 3)'), '1 2 - 3 min')
+        self.assertEqual(shunting_yard('min(1, 2 - 3)'), '1 2 3 - min')
 
 
 if __name__ == '__main__':

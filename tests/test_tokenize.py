@@ -40,7 +40,14 @@ class TestTokenizer(unittest.TestCase):
         self.assertListEqual(list(tokenize('-3/2*pi')), ['-u', '3', '/', '2', '*', 'pi'])
 
     def test_function_2_arguments(self):
-        self.assertListEqual(list(tokenize('max(1, 4)')), ['max', '(', '1', '4', ')'])
+        self.assertListEqual(list(tokenize('max(1, 4)')), ['max', '(', '1', ',', '4', ')'])
+        self.assertListEqual(list(tokenize('max(1; 4)')), ['max', '(', '1', ';', '4', ')'])
+
+    def test_function_3_arguments(self):
+        self.assertListEqual(list(tokenize('max(1, 2, 3)')), ['max', '(', '1', ',', '2', ',', '3', ')'])
+        self.assertListEqual(list(tokenize('max(1, 2; 3)')), ['max', '(', '1', ',', '2', ';', '3', ')'])
+        self.assertListEqual(list(tokenize('max(1; 2, 3)')), ['max', '(', '1', ';', '2', ',', '3', ')'])
+        self.assertListEqual(list(tokenize('max(1; 2; 3)')), ['max', '(', '1', ';', '2', ';', '3', ')'])
 
     def test_function_underscore(self):
         self.assertListEqual(list(tokenize('arc_cos(0)')), ['arc_cos', '(', '0', ')'])
@@ -58,12 +65,12 @@ class TestTokenizer(unittest.TestCase):
         self.assertListEqual(list(tokenize('+(+1)')), ['+u', '(', '+u', '1', ')'])
 
     def test_function_unary_in_function(self):
-        self.assertListEqual(list(tokenize('min(-1, 2)')), ['min', '(', '-u', '1', '2', ')'])
-        self.assertListEqual(list(tokenize('min(1, -2)')), ['min', '(', '1', '-u', '2', ')'])
-        self.assertListEqual(list(tokenize('min(1, -(2+sin(3)))')), ['min', '(', '1', '-u', '(', '2', '+', 'sin', '(', '3', ')', ')', ')'])
+        self.assertListEqual(list(tokenize('min(-1, 2)')), ['min', '(', '-u', '1', ',', '2', ')'])
+        self.assertListEqual(list(tokenize('min(1, -2)')), ['min', '(', '1', ',', '-u', '2', ')'])
+        self.assertListEqual(list(tokenize('min(1, -(2+sin(3)))')), ['min', '(', '1', ',', '-u', '(', '2', '+', 'sin', '(', '3', ')', ')', ')'])
 
     def test_digits_in_function_name(self):
-        self.assertListEqual(list(tokenize('min3(1, 2)')), ['min3', '(', '1', '2', ')'])
+        self.assertListEqual(list(tokenize('min3(1, 2)')), ['min3', '(', '1', ',', '2', ')'])
 
 
 

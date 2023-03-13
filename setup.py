@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fi:
 
 setuptools.setup(
 	name="shunting-yard",
-	version="1.0.6",
+	version="1.0.7",
 	author="Paul 'charon25' Kern",
 	description="Compute any math expression",
 	long_description=long_description,
@@ -14,5 +14,5 @@ setuptools.setup(
 	url="https://www.github.com/charon25/ShuntingYard",
 	license="MIT",
 	packages=['shunting_yard'],
-	download_url="https://github.com/charon25/ShuntingYard/archive/refs/tags/v1.0.6.tar.gz"
+	download_url="https://github.com/charon25/ShuntingYard/archive/refs/tags/v1.0.7.tar.gz"
 )
