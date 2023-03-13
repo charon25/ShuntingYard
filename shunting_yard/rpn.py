@@ -27,7 +27,11 @@ FUNCTIONS: FunctionDictionary = {
     'cos': (1, math.cos),
     'tan': (1, math.tan),
     'min': (2, min),
+    'min3': (3, min),
+    'min4': (4, min),
     'max': (2, max),
+    'max3': (3, max),
+    'max4': (4, max),
     'abs': (1, abs)
 }
 

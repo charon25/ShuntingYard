@@ -62,6 +62,9 @@ class TestTokenizer(unittest.TestCase):
         self.assertListEqual(list(tokenize('min(1, -2)')), ['min', '(', '1', '-u', '2', ')'])
         self.assertListEqual(list(tokenize('min(1, -(2+sin(3)))')), ['min', '(', '1', '-u', '(', '2', '+', 'sin', '(', '3', ')', ')', ')'])
 
+    def test_digits_in_function_name(self):
+        self.assertListEqual(list(tokenize('min3(1, 2)')), ['min3', '(', '1', '2', ')'])
+
 
 
 if __name__ == '__main__':

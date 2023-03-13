@@ -1,6 +1,6 @@
 from typing import Iterator
 
-from shunting_yard.constants import BASE_OPERATORS, FUNCTION_CHARS, NUMBER_CHARS, UNARY_OPERATORS
+from shunting_yard.constants import BASE_OPERATORS, FUNCTION_CHARS, FUNCTION_FIRST_CHARS, NUMBER_CHARS, UNARY_OPERATORS
 
 
 def tokenize(string: str) -> Iterator[str]:
@@ -35,8 +35,8 @@ def tokenize(string: str) -> Iterator[str]:
             cursor += (cursor_end - cursor)
             is_infix = True
 
-        elif char in FUNCTION_CHARS:
-            # Go through until not a number anymore
+        elif char in FUNCTION_FIRST_CHARS:
+            # Go through until not a function anymore
             cursor_end = cursor + 1
             while  cursor_end < len(string) and string[cursor_end] in FUNCTION_CHARS:
                 cursor_end += 1

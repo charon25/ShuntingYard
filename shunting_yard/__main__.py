@@ -6,7 +6,7 @@ from .shunting_yard import shunting_yard, MismatchedBracketsError
 
 if len(sys.argv) <= 1:
     print('Expression to evaluate ?')
-    expression = input('>>>')
+    expression = input('>>> ')
 else:
     expression = sys.argv[1]
 
