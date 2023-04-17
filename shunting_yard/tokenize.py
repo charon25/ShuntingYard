@@ -1,6 +1,27 @@
+import re
 from typing import Iterator
 
 from shunting_yard.constants import BASE_OPERATORS, FUNCTION_CHARS, FUNCTION_FIRST_CHARS, NUMBER_CHARS, SEPARATORS, UNARY_OPERATORS
+
+
+
+def _remove_implicit_multiplication(expression: str) -> str:
+    """Add '*' to every implicit multiplication. These can be :
+        - between a number and a variable or function: 2x 3sin(x)
+        - between brackets: (x+1)(x-1), sin(x)(1+2)
+        - between a closing bracket and a number/variable/function: sin(x)2, (1+2)x, (1+2)sin(x)
+    However, a lot of cases do not require implicit multiplication, such as:
+        - 0.5
+        - min(1,2)
+        - min((1+2),2)
+        ...
+    """
+    
+    # Insert '*' between a number and anything other than a digit, an operation, a closing bracket, a decimal dot, a function parameters separator
+    expression = re.sub(r'\b(\d+)([^)\d.,;+*\/^-])', r'\1*\2', expression)
+    # Insert '*' between a closing bracket and anything other than an operation, another closing bracket, a function parameters separator
+    expression = re.sub(r'(\))([^),;+*\/^-])', r'\1*\2', expression)
+    return expression
 
 
 def tokenize(string: str) -> Iterator[str]:
@@ -9,6 +30,7 @@ def tokenize(string: str) -> Iterator[str]:
 
     # Remove all whitespaces are they do not change anything
     string = ''.join(string.split())
+    string = _remove_implicit_multiplication(string)
 
     cursor = 0
     is_infix = False

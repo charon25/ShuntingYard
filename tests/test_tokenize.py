@@ -1,6 +1,7 @@
 import unittest
 
 from shunting_yard import tokenize
+from shunting_yard.tokenize import _remove_implicit_multiplication
 
 
 class TestTokenizer(unittest.TestCase):
@@ -71,6 +72,54 @@ class TestTokenizer(unittest.TestCase):
 
     def test_digits_in_function_name(self):
         self.assertListEqual(list(tokenize('min3(1, 2)')), ['min3', '(', '1', ',', '2', ')'])
+
+
+class TestRemoveImplicitMultiplication(unittest.TestCase):
+
+    def test_no_implicit_mult(self):
+        self.assertEqual(_remove_implicit_multiplication('1+1'), '1+1')
+        self.assertEqual(_remove_implicit_multiplication('1-1'), '1-1')
+        self.assertEqual(_remove_implicit_multiplication('1*1'), '1*1')
+        self.assertEqual(_remove_implicit_multiplication('1/1'), '1/1')
+        self.assertEqual(_remove_implicit_multiplication('1^1'), '1^1')
+        self.assertEqual(_remove_implicit_multiplication('(1)+1'), '(1)+1')
+        self.assertEqual(_remove_implicit_multiplication('(1)-1'), '(1)-1')
+        self.assertEqual(_remove_implicit_multiplication('(1)*1'), '(1)*1')
+        self.assertEqual(_remove_implicit_multiplication('(1)/1'), '(1)/1')
+        self.assertEqual(_remove_implicit_multiplication('(1)^1'), '(1)^1')
+        self.assertEqual(_remove_implicit_multiplication('((1))'), '((1))')
+
+    def test_no_implicit_mult2(self):
+        self.assertEqual(_remove_implicit_multiplication('0.5'), '0.5')
+        self.assertEqual(_remove_implicit_multiplication('max(1,2)'), 'max(1,2)')
+        self.assertEqual(_remove_implicit_multiplication('max(1;2)'), 'max(1;2)')
+        self.assertEqual(_remove_implicit_multiplication('max((1+2),2)'), 'max((1+2),2)')
+        self.assertEqual(_remove_implicit_multiplication('max((1+2);2)'), 'max((1+2);2)')
+
+    def test_digit_other(self):
+        self.assertEqual(_remove_implicit_multiplication('2x'), '2*x')
+        self.assertEqual(_remove_implicit_multiplication('3cos(5)'), '3*cos(5)')
+        self.assertEqual(_remove_implicit_multiplication('3_func(0)'), '3*_func(0)')
+        self.assertEqual(_remove_implicit_multiplication('1(2+3)'), '1*(2+3)')
+
+    def test_implicit_mult_double_brackets(self):
+        self.assertEqual(_remove_implicit_multiplication('(1+2)(3+4)'), '(1+2)*(3+4)')
+        self.assertEqual(_remove_implicit_multiplication('(1+(2))((3+5)+4)((6+7)(8+9))'), '(1+(2))*((3+5)+4)*((6+7)*(8+9))')
+        self.assertEqual(_remove_implicit_multiplication('sin(pi)(1+2)'), 'sin(pi)*(1+2)')
+
+    def test_implicit_mult_bracket_other(self):
+        self.assertEqual(_remove_implicit_multiplication('sin(1)2'), 'sin(1)*2')
+        self.assertEqual(_remove_implicit_multiplication('sin(1).5'), 'sin(1)*.5')
+        self.assertEqual(_remove_implicit_multiplication('(1+2)3'), '(1+2)*3')
+        self.assertEqual(_remove_implicit_multiplication('(1+2)x'), '(1+2)*x')
+        self.assertEqual(_remove_implicit_multiplication('(1+2)sin(1)'), '(1+2)*sin(1)')
+
+    def test_with_longer_numbers(self):
+        self.assertEqual(_remove_implicit_multiplication('200x'), '200*x')
+        self.assertEqual(_remove_implicit_multiplication('301cos(5)'), '301*cos(5)')
+        self.assertEqual(_remove_implicit_multiplication('345_func(0)'), '345*_func(0)')
+        self.assertEqual(_remove_implicit_multiplication('156(2+3)'), '156*(2+3)')
+        self.assertEqual(_remove_implicit_multiplication('1+200x'), '1+200*x')
 
 
 

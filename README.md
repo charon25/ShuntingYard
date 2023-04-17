@@ -54,7 +54,7 @@ print(sy.compute("2^32 - sqrt(tan(42))"))
 By default, the module can process the 5 basic operations (`+`, `-`, `*`, `/`, `^`) as well as those functions :
  - sqrt
  - sin, cos, tan
- - min, max (with 2 arguments)
+ - min, max (with 2, 3 or 4 arguments)
  - abs
 
 As well as the constants `pi` and `e`.
@@ -79,6 +79,16 @@ The `sy.compute` (and `sy.shuting_yard`) also have extra parameters :
  - `variable` (str, optional) : if defined, will consider any token matching it as a number. This is useful in expression such as `min(x, 1)` to get `x` to behave as a number.
 
 ## Additional features
+
+### Implicit multiplication
+
+This program supports implicit multiplication (when the `*` symbol is omitted). They can have multiple forms, such as :
+- `(1+2)(2+3)`
+- `2sin(pi)`
+- `(1+2)3`
+- `sin(pi)10`
+
+### Functions
 
 Instead of just calling the `sy.compute` function, you can break it into its parts :
  - `sy.shunting_yard` will return the RPN equivalent expression of the given mathematical expression ;
