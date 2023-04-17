@@ -1,6 +1,6 @@
+import math
 from operator import add, mul, neg, pos, sub, truediv
 from typing import Any, Callable, Optional, Union
-import math
 
 from shunting_yard.constants import NUMBER_CHARS
 

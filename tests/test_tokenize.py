@@ -73,6 +73,11 @@ class TestTokenizer(unittest.TestCase):
     def test_digits_in_function_name(self):
         self.assertListEqual(list(tokenize('min3(1, 2)')), ['min3', '(', '1', ',', '2', ')'])
 
+    def test_upper_case_functions(self):
+        self.assertListEqual(list(tokenize('Sin(x)')), ['Sin', '(', 'x', ')'])
+        self.assertListEqual(list(tokenize('sIN(x)')), ['sIN', '(', 'x', ')'])
+        self.assertListEqual(list(tokenize('SIN(x)')), ['SIN', '(', 'x', ')'])
+
 
 class TestRemoveImplicitMultiplication(unittest.TestCase):
 

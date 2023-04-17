@@ -1,7 +1,7 @@
 from enum import Enum
-from typing import Optional
 import math
 import re
+from typing import Optional
 
 from shunting_yard.tokenize import tokenize
 from shunting_yard.constants import BASE_OPERATORS, NUMBER_CHARS, FUNCTION_CHARS, SEPARATORS, SEPARATORS_NO_CLOSING_BRACKET, UNARY_OPERATORS_SYMBOLS
