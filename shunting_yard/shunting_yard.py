@@ -43,7 +43,7 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
 
 
 # Reference : https://en.wikipedia.org/wiki/Shunting_yard_algorithm
-def shunting_yard(expression: str, case_sensitive: bool = True, variable: Optional[str] = None) -> str:
+def shunting_yard(expression: str, case_sensitive: bool = True, variable: Optional[str] = None, convert_scientific_notation: bool = True) -> str:
     """Convert the given classical math expression into Reverse Polish Notation using the Shunting-yard algorithm (see https://en.wikipedia.org/wiki/Shunting_yard_algorithm for more details). All whitespace are ignored.
 
 
@@ -56,8 +56,9 @@ def shunting_yard(expression: str, case_sensitive: bool = True, variable: Option
 
     Args:
         expression (str): string containing the mathematical expression to convert.
-        case_sensitive (bool): indicates whether the expression should care about case.
-        variable (str, optional): if defined, will treat every token matching the variable as a number.
+        case_sensitive (bool): indicates whether the expression should care about case (default: True).
+        variable (str, optional): if defined, will treat every token matching the variable as a number (default: None).
+        convert_scientific_notation (bool, optional): indicates whether the expression should convert scientific notation (e.g. 1.23e4 to 1.23*10^4) (default: True).
 
     Raises:
         MismatchedBracketsError: raised if the bracket are unbalanced.
@@ -72,7 +73,7 @@ def shunting_yard(expression: str, case_sensitive: bool = True, variable: Option
     if not case_sensitive:
         expression = expression.lower()
 
-    for token in tokenize(expression):
+    for token in tokenize(expression, convert_scientific_notation=convert_scientific_notation):
         first_char = token[0]
 
         if first_char in NUMBER_CHARS or token == variable:

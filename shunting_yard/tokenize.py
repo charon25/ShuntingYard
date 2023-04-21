@@ -2,6 +2,7 @@ import re
 from typing import Iterator
 
 from shunting_yard.constants import BASE_OPERATORS, FUNCTION_CHARS, FUNCTION_FIRST_CHARS, NUMBER_CHARS, SEPARATORS, UNARY_OPERATORS
+from shunting_yard.constants import IMPLICIT_MULTIPLICATION_BRACKET_REGEX, IMPLICIT_MULTIPLICATION_NUMBER_REGEX, SCIENTIFIC_NOTATION_AFTER_DOT_REGEX, SCIENTIFIC_NOTATION_BEFORE_DOT_REGEX
 
 
 
@@ -18,18 +19,34 @@ def _remove_implicit_multiplication(expression: str) -> str:
     """
     
     # Insert '*' between a number and anything other than a digit, an operation, a closing bracket, a decimal dot, a function parameters separator
-    expression = re.sub(r'\b(\d+)([^)\d.,;+*\/^-])', r'\1*\2', expression)
+    expression = re.sub(IMPLICIT_MULTIPLICATION_NUMBER_REGEX, r'\1*\2', expression)
     # Insert '*' between a closing bracket and anything other than an operation, another closing bracket, a function parameters separator
-    expression = re.sub(r'(\))([^),;+*\/^-])', r'\1*\2', expression)
+    expression = re.sub(IMPLICIT_MULTIPLICATION_BRACKET_REGEX, r'\1*\2', expression)
     return expression
 
 
-def tokenize(string: str) -> Iterator[str]:
+def _convert_scientific_notation(expression: str) -> str:
+    """"""
+
+    # Replace everything of the form "xey" by "x*10^y" where y is an integer and x is a float not ending with just a dot
+    expression = re.sub(SCIENTIFIC_NOTATION_AFTER_DOT_REGEX, r'\1*10^(\2)', expression)
+
+    # Replace everything of the form "xey" by "x*10^y" where y is an integer and x is a float not starting with just a dot
+    expression = re.sub(SCIENTIFIC_NOTATION_BEFORE_DOT_REGEX, r'\1*10^(\2)', expression)
+
+    return expression
+
+
+def tokenize(string: str, convert_scientific_notation: bool = True) -> Iterator[str]:
     if string == '':
         return
 
     # Remove all whitespaces are they do not change anything
     string = ''.join(string.split())
+
+    if convert_scientific_notation:
+        string = _convert_scientific_notation(string)
+
     string = _remove_implicit_multiplication(string)
 
     cursor = 0

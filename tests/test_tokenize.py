@@ -1,7 +1,7 @@
 import unittest
 
 from shunting_yard import tokenize
-from shunting_yard.tokenize import _remove_implicit_multiplication
+from shunting_yard.tokenize import _convert_scientific_notation, _remove_implicit_multiplication
 
 
 class TestTokenizer(unittest.TestCase):
@@ -106,6 +106,7 @@ class TestRemoveImplicitMultiplication(unittest.TestCase):
         self.assertEqual(_remove_implicit_multiplication('3cos(5)'), '3*cos(5)')
         self.assertEqual(_remove_implicit_multiplication('3_func(0)'), '3*_func(0)')
         self.assertEqual(_remove_implicit_multiplication('1(2+3)'), '1*(2+3)')
+        self.assertEqual(_remove_implicit_multiplication('1(2(3(4(5(6(7(8(9(10+0)))))))))'), '1*(2*(3*(4*(5*(6*(7*(8*(9*(10+0)))))))))')
 
     def test_implicit_mult_double_brackets(self):
         self.assertEqual(_remove_implicit_multiplication('(1+2)(3+4)'), '(1+2)*(3+4)')
@@ -126,6 +127,30 @@ class TestRemoveImplicitMultiplication(unittest.TestCase):
         self.assertEqual(_remove_implicit_multiplication('156(2+3)'), '156*(2+3)')
         self.assertEqual(_remove_implicit_multiplication('1+200x'), '1+200*x')
 
+
+class TestScientificNotation(unittest.TestCase):
+
+    def test_not_present(self):
+        self.assertEqual(_convert_scientific_notation('abc'), 'abc')
+        self.assertEqual(_convert_scientific_notation('123.4'), '123.4')
+        self.assertEqual(_convert_scientific_notation('123exp(4)'), '123exp(4)')
+        self.assertEqual(_convert_scientific_notation('123e +1'), '123e +1')
+
+    def test_present(self):
+        self.assertEqual(_convert_scientific_notation('12e3'), '12*10^(3)')
+        self.assertEqual(_convert_scientific_notation('+12e3'), '+12*10^(3)')
+        self.assertEqual(_convert_scientific_notation('-12e3'), '-12*10^(3)')
+        self.assertEqual(_convert_scientific_notation('1.2e3'), '1.2*10^(3)')
+        self.assertEqual(_convert_scientific_notation('1.e3'), '1.*10^(3)')
+        self.assertEqual(_convert_scientific_notation('.2e3'), '.2*10^(3)')
+        self.assertEqual(_convert_scientific_notation('12e-3'), '12*10^(-3)')
+        self.assertEqual(_convert_scientific_notation('12e+3'), '12*10^(+3)')
+        self.assertEqual(_convert_scientific_notation('12e34'), '12*10^(34)')
+        self.assertEqual(_convert_scientific_notation('12e-34'), '12*10^(-34)')
+        self.assertEqual(_convert_scientific_notation('12e+34'), '12*10^(+34)')
+
+    def test_double(self):
+        self.assertEqual(_convert_scientific_notation('12e3+45e-6'), '12*10^(3)+45*10^(-6)')
 
 
 if __name__ == '__main__':
