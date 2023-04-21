@@ -48,11 +48,17 @@ class TestShuntingYard(unittest.TestCase):
         self.assertEqual(shunting_yard('min(1, 2)', case_sensitive=False), shunting_yard('MIN(1, 2)', case_sensitive=False))
 
     def test_unary_in_function(self):
-        self.assertEqual(shunting_yard('min(-1, 2)'), '1 -u 2 min')
-        self.assertEqual(shunting_yard('min(-(1+3), 2)'), '1 3 + -u 2 min')
-        self.assertEqual(shunting_yard('min(1, -2)'), '1 2 -u min')
-        self.assertEqual(shunting_yard('min(1, -(2+3))'), '1 2 3 + -u min')
-        self.assertEqual(shunting_yard('min(1, -min(3, 4))'), '1 3 4 min -u min')
+        self.assertEqual(shunting_yard('min(-1, 2)'), '0 1 - 1 * 2 min')
+        self.assertEqual(shunting_yard('min(-(1+3), 2)'), '0 1 - 1 3 + * 2 min')
+        self.assertEqual(shunting_yard('min(1, -2)'), '1 0 1 - 2 * min')
+        self.assertEqual(shunting_yard('min(1, -(2+3))'), '1 0 1 - 2 3 + * min')
+        self.assertEqual(shunting_yard('min(1, -min(3, 4))'), '1 0 1 - 3 4 min * min')
+
+        self.assertEqual(shunting_yard('min(+1, 2)'), '1 2 min')
+        self.assertEqual(shunting_yard('min(+(1+3), 2)'), '1 3 + 2 min')
+        self.assertEqual(shunting_yard('min(1, +2)'), '1 2 min')
+        self.assertEqual(shunting_yard('min(1, +(2+3))'), '1 2 3 + min')
+        self.assertEqual(shunting_yard('min(1, +min(3, 4))'), '1 3 4 min min')
 
     def test_variable(self):
         self.assertEqual(shunting_yard('min(x, 1)'), 'x 1 min')

@@ -17,8 +17,6 @@ OPERATORS_PRECEDENCE: dict[str, int] = {
     '*': 20,
     '/': 20,
     '^': 30,
-    '-u': 40,
-    '+u': 40,
 }
 
 # Returns the precendence if the operator is one of +-*/^, or infinity if it is a function
@@ -105,11 +103,13 @@ def shunting_yard(expression: str, case_sensitive: bool = True, variable: Option
                 output.append(operator_stack.pop())
 
         elif first_char in BASE_OPERATORS:
-            while (len(operator_stack) > 0 and
-                  (operator := operator_stack[-1]) not in SEPARATORS_NO_CLOSING_BRACKET and
-                  (get_precedence(operator) > get_precedence(token) or
-                        (get_precedence(operator) == get_precedence(token) and
-                        OPERATORS_ASSOCIATIVITY[token] == Associativity.LEFT))):
+            while   (len(operator_stack) > 0 and
+                    (prev_operator := operator_stack[-1]) not in SEPARATORS_NO_CLOSING_BRACKET and (
+                        get_precedence(prev_operator) > get_precedence(token) or (
+                            get_precedence(prev_operator) == get_precedence(token) and
+                            OPERATORS_ASSOCIATIVITY[token] == Associativity.LEFT
+                        )
+                    )):
 
                 output.append(operator_stack.pop())
 

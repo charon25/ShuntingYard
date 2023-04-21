@@ -56,7 +56,8 @@ def tokenize(string: str, convert_scientific_notation: bool = True) -> Iterator[
         char = string[cursor]
 
         if not is_infix and char in UNARY_OPERATORS:
-            yield f'{char}u'
+            if char == '-':
+                yield from '(0-1)*'
             cursor += 1
 
         elif char in BASE_OPERATORS or char in SEPARATORS:
