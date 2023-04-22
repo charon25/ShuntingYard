@@ -114,7 +114,3 @@ print(list(sy.tokenize('1+(2 * 3) - 4 * (2 / 3)')))
 # ['1', '+', '(', '2', '*', '3', ')', '-', '4', '*', '(', '2', '/', '3', ')']
 
 ```
-
-## Note
-
-Unary minus (e.g. `-1` or `-(x+1)`) will be converted to `(0-1)*` before computing the RPN of the expression. Unary plus will be removed.
