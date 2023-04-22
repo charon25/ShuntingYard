@@ -16,6 +16,8 @@ OPERATORS_PRECEDENCE: dict[str, int] = {
     '-': 10,
     '*': 20,
     '/': 20,
+    '-u': 20,
+    '+u': 20,
     '^': 30,
 }
 
@@ -35,7 +37,7 @@ OPERATORS_ASSOCIATIVITY: dict[str, Associativity] = {
     '/': Associativity.LEFT,
     '^': Associativity.RIGHT,
     '-u': Associativity.RIGHT,
-    '+u': Associativity.LEFT,
+    '+u': Associativity.RIGHT,
 }
 
 
@@ -76,8 +78,6 @@ def shunting_yard(expression: str, case_sensitive: bool = True, variable: Option
 
         if first_char in NUMBER_CHARS or token == variable:
             output.append(token)
-            if len(operator_stack) > 0 and operator_stack[-1] in UNARY_OPERATORS_SYMBOLS:
-                output.append(operator_stack.pop())
 
         elif first_char in FUNCTION_CHARS:
             operator_stack.append(token)
