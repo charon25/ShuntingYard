@@ -4,7 +4,7 @@ This repo is a Python (>= 3.9) module containing an implementation of the [Shunt
 
 # Installation
 
-To install it, just run :
+This module is available [on Pypi](https://pypi.org/project/shunting-yard/). To install it, just run :
 
 ```bash
 pip install shunting-yard --user
